@@ -1,0 +1,13 @@
+I will be exploring a dataset found on data.world that was originally found on The Humanitarian Data Exchange. 
+This dataset contains numerous market indicators of importance to the African Development Bank, 
+along with dates and values for different indicators.
+
+From this data I chose to ask seven questions/tasks:
+
+1    How many unique indicators are there?
+2    Is the number of unique indicators equal to the unique indicatorname field? If not explain the discrepancy.
+3    Remove all commodities from this table and put them in a separate table.
+4    From the remaining indicators, are there any gaps in reporting?
+5    Calculate the 'PercentChangeDaily' of indicators.
+6    Calculate the 'AverageMonthly' value of different indicators.
+7    What were the indicators that increased the most percentage OVERALL from the inception of this data.
