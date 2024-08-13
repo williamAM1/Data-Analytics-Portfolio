@@ -1,0 +1,72 @@
+1    How many unique indicators are there?
+
+SELECT 
+	COUNT(DISTINCT(indicator))
+FROM 
+	afdbmarkettrends2015
+
+Problem 1 is complete. I've answered the question, 
+but let's answer some questions that may be implied. 
+I will output the 31 indicators along with the indicator names. 
+We will sort the list alphabetically by the indicatorname.
+
+SELECT 
+	DISTINCT(indicator), 
+	indicatorname
+FROM 
+	afdbmarkettrends2015
+ORDER BY 
+	indicatorname
+
+
+
+
+
+2    Is the number of unique indicators equal to the unique indicatorname field? If not explain the discrepancy.
+
+SELECT 
+	COUNT(DISTINCT(indicator)) AS indicator_count,
+	COUNT(DISTINCT(indicatorname)) AS indicator_name_count
+FROM 
+	afdbmarkettrends2015
+
+
+
+3    Remove all commodities from this table and put them in a separate table.
+
+CREATE TABLE afdbmarketcommodities2015 AS
+	SELECT 
+		* 
+	FROM 
+		afdbmarkettrends2015
+	WHERE 
+		unit IS NOT NULL;
+
+SELECT 
+	COUNT (*) AS newcommoditiescount 
+FROM 
+	afdbmarketcommodities2015;
+
+DELETE FROM 
+	afdbmarkettrends2015 
+WHERE 
+	unit IS NOT NULL;
+
+
+
+4    From the remaining indicators, are there any gaps in reporting?
+
+SELECT 
+	indicatorname,
+	date,
+	previousday,
+	CAST(date AS timestamp) - CAST(previousday AS timestamp)  AS timegap
+FROM (
+	SELECT 
+		*,
+		LAG(date) OVER(PARTITION BY (indicator) ORDER BY indicator, date) AS previousday
+	FROM afdbmarkettrends2015
+	ORDER BY 
+		indicator, 
+		date) 
+	AS laggedtable
