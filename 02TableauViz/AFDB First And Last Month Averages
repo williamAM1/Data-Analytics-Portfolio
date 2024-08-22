@@ -1,0 +1,49 @@
+SELECT 
+	--3 final output
+	-- indicator | initial date | initial average | ending date | ending average
+	initial_values.indicatorname,
+	make_date(CAST(initial_year AS INT), CAST(initial_month AS INT), 1) AS initital_date,
+	initial_average,
+	make_date(CAST(initial_year AS INT), CAST(initial_month AS INT), 1) AS ending_date,
+	ending_average
+FROM (
+	/*1  Create a month/year format and aggregate
+	Averagre value per indicator per month/year
+	Only include first month using HAVING clause*/
+	SELECT
+		indicatorname,
+		EXTRACT('Year' FROM date) AS initial_year,
+		EXTRACT('Month' FROM date) AS initial_month,
+		AVG(value) AS initial_average
+	FROM
+		afdbmarkettrends2015
+	GROUP BY
+		indicatorname, initial_year, initial_month
+	HAVING
+		EXTRACT('Year' FROM date) = 2011
+		AND
+		EXTRACT('Month' FROM date) = 1
+	ORDER BY
+		indicatorname, initial_year, initial_month)
+	AS initial_values
+JOIN(
+	/*2  Same as first except 
+	Only include last month using HAVING clause*/
+	SELECT
+		indicatorname,
+		EXTRACT('Year' FROM date) AS ending_year,
+		EXTRACT('Month' FROM date) AS ending_month,
+		AVG(value) AS ending_average
+	FROM
+		afdbmarkettrends2015
+	GROUP BY
+		indicatorname, ending_year, ending_month
+	HAVING
+		EXTRACT('Year' FROM date) = 2015
+		AND
+		EXTRACT('Month' FROM date) = 7
+	ORDER BY
+		indicatorname, ending_year, ending_month)
+	AS ending_values
+ON
+	initial_values.indicatorname = ending_values.indicatorname
